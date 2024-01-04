@@ -1,7 +1,5 @@
-import logging
 import torch
 
-logging.basicConfig( filename='example.log', encoding='utf-8', level=logging.INFO )
 
 class RandomDataCreation:
     def __init__( self, weight = 0.7, bias = 0.3 ):
