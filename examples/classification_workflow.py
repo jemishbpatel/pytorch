@@ -65,10 +65,10 @@ class ClassificiationWorkFlow:
 
     def getOptimizer( self ):
         optimizerForBinaryClassification = OptmizerFactory( data = tongue.BINARY_CLASSIFICATION )
-        self.optimizer = optimizerForBinaryClassification( params = self.model_0.parameters(), lr = 0.01 )
+        self.optimizer = optimizerForBinaryClassification( params = self.model_0.parameters(), lr = 0.1 )
 
     def train( self ):
-        self.trainModel.trainingLoop( self.model_0, self.X_train, self.y_train, self.X_test, self.y_test, self.lossFunction, self.optimizer, epochs = 1000 )
+        self.trainModel.trainingLoop( self.model_0, self.X_train, self.y_train, self.X_test, self.y_test, self.lossFunction, self.optimizer, epochs = 2000 )
         self.trainModel.plotLossCurve()
 
     def displayParameters( self ):
