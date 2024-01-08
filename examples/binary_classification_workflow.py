@@ -1,13 +1,13 @@
 import torch
 import logging
 
-logging.basicConfig( filename='classification.log', encoding='utf-8', level=logging.INFO )
+logging.basicConfig( filename='binary_classification.log', encoding='utf-8', level=logging.INFO )
 
 from utility import tongue
 from dataloading.randomcircles import Circles
 from splittrainandtest.testandtrainsplit import TestAndTrainSplit
 from visualize.plot import Visualize
-from createmodel.circlesmodel import CircleModel
+from createmodel.circlesmodel import BinaryClassificationModel
 from lossfunction.lossfunctionfactory import LossFunctionFactory
 from optimizer.optimizerfactory import OptmizerFactory
 from trainmodel.trainingmodelfactory import TrainModelFactory
@@ -23,7 +23,7 @@ class ClassificiationWorkFlow:
         self.trainModel = TrainModelFactory( dataType = tongue.BINARY_CLASSIFICATION )()
         logging.info( f"{type( self.trainModel)}" )
         self._modelDirectoryPath = "models"
-        self._modelFilename = "01_pytorch_workflow_classification_model_0.pth"
+        self._modelFilename = "01_pytorch_workflow_binary_classification_model_0.pth"
         self._modelState = None
         self._loadedModel = None
         logging.info( f"Running on: {tongue.TARGET_DEVICE}" )
@@ -44,7 +44,7 @@ class ClassificiationWorkFlow:
         Visualize().plotCircles( self.X, self.y )
 
     def createModel( self ):
-        self.model_0 = CircleModel( modelVersion = tongue.CIRCLE_MODEL_VERSION1 )
+        self.model_0 = BinaryClassificationModel( modelVersion = tongue.CIRCLE_MODEL_VERSION1 )
         self.model_0.to( tongue.TARGET_DEVICE )
         logging.debug( list( self.model_0.parameters() ) )
         logging.debug( self.model_0.state_dict() )
@@ -54,7 +54,6 @@ class ClassificiationWorkFlow:
         with torch.inference_mode():
             y_preds = self.model_0( self.X_test )
         logging.debug( y_preds )
-        Visualize().plotPredictions( self.X_train, self.y_train, self.X_test, self.y_test, predictions = y_preds )
 
     def visualizeDecisionBoundary( self ):
         Visualize().plotDecisionBoundaries( self.model_0, self.X_train, self.y_train, self.X_test, self.y_test )
@@ -78,7 +77,7 @@ class ClassificiationWorkFlow:
         SaveModel( self.model_0, modeldirectoryPath = self._modelDirectoryPath, modelFilename = self._modelFilename )
 
     def loadModel( self ):
-        self._loadedModel = LoadModel( modelType = tongue.LINEAR_REGRESSION, modelPath = self._modelDirectoryPath + "/" + self._modelFilename ).model()
+        self._loadedModel = LoadModel( modelType = tongue.BINARY_CLASSIFICATION, modelPath = self._modelDirectoryPath + "/" + self._modelFilename ).model()
         logging.info( f"Loaded Trained Model parameters: {self._loadedModel.state_dict()}" )
 
 if __name__ == "__main__":
@@ -87,12 +86,11 @@ if __name__ == "__main__":
     obj.visualizeInitialData()
     obj.testAndTrainSplit()
     obj.createModel()
-#    obj.modelPredictions()
     obj.getLossFunction()
     obj.getOptimizer()
     obj.train()
     obj.visualizeDecisionBoundary()
-#    obj.displayParameters()
-#    obj.modelPredictions()
-#    obj.saveModel()
-#    obj.loadModel()
+    obj.displayParameters()
+    obj.modelPredictions()
+    obj.saveModel()
+    obj.loadModel()

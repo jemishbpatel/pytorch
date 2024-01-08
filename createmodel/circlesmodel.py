@@ -1,7 +1,7 @@
 from torch import nn
 from utility import tongue
 
-class CircleModel( nn.Module ):
+class BinaryClassificationModel( nn.Module ):
     def __init__( self, modelVersion = tongue.CIRCLE_MODEL_VERSION1 ):
         super().__init__()
         self.modelVersion = tongue.CIRCLE_MODEL_VERSION1
