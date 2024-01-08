@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from utility.helper_functions import plot_predictions, plot_decision_boundary
 
 class Visualize:
     def plotPredictions( self, trainData = None, trainLables = None, testData = None, testLables = None, predictions = None ):
@@ -21,4 +22,18 @@ class Visualize:
         plt.ylabel( "Loss" )
         plt.xlabel( "Epochs" )
         plt.legend()
+        plt.show()
+
+    def plotCircles( self, X, y ):
+        plt.scatter( x = X[:, 0], y = X[:, 1], c = y, cmap = plt.cm.RdYlBu )
+        plt.show()
+
+    def plotDecisionBoundaries( self, model, X_train, y_train, X_test, y_test ):
+        plt.figure( figsize = ( 12, 6 ) )
+        plt.subplot( 1, 2, 1 )
+        plt.title( "Train" )
+        plot_decision_boundary( model, X_train, y_train )
+        plt.subplot( 1, 2, 2 )
+        plt.title( "Test" )
+        plot_decision_boundary( model, X_test, y_test)
         plt.show()

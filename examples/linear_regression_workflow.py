@@ -10,7 +10,7 @@ from visualize.plot import Visualize
 from createmodel.linearregressionmodel import LinearRegressionModel
 from lossfunction.lossfunctionfactory import LossFunctionFactory
 from optimizer.optimizerfactory import OptmizerFactory
-from trainmodel.training import TrainModel
+from trainmodel.trainingmodelfactory import TrainModelFactory
 from savemodel.save import SaveModel
 from loadmodel.load import LoadModel
 
@@ -20,7 +20,7 @@ class Workflow1:
         self.model_0 = None
         self.lossFunction = None
         self.optimizer = None
-        self.trainModel = TrainModel()
+        self.trainModel = TrainModelFactory( tongue.LINEAR_REGRESSION )()
         self._modelDirectoryPath = "models"
         self._modelFilename = "01_pytorch_workflow_model_0.pth"
         self._modelState = None

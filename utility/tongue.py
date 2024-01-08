@@ -2,5 +2,8 @@ import torch
 LINEAR_REGRESSION = "LinearRegression"
 LINEAR_REGRESSION_VERSION1 = "V1"
 LINEAR_REGRESSION_VERSION2 = "V2"
+CIRCLE_MODEL_VERSION1 = "V1"
+CIRCLE_MODEL_VERSION1 = "V2"
+BINARY_CLASSIFICATION = "BinaryClassifiction"
 
 TARGET_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
