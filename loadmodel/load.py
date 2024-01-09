@@ -1,7 +1,8 @@
 import torch
 from utility import tongue
 from createmodel.linearregressionmodel import LinearRegressionModel
-from createmodel.circlesmodel import BinaryClassificationModel
+from createmodel.binaryclassificationmodel import BinaryClassificationModel
+from createmodel.multiclassclassification import MulticlassClassification
 
 
 class LoadModel:
@@ -15,6 +16,8 @@ class LoadModel:
             self._model =  LinearRegressionModel( modelVersion = tongue.LINEAR_REGRESSION_VERSION2 )
         if self._modelType == tongue.BINARY_CLASSIFICATION:
             self._model =  BinaryClassificationModel( modelVersion = tongue.CIRCLE_MODEL_VERSION1 )
+        if self._modelType == tongue.MULTILCLASS_CLASSIFICATION:
+            self._model =  MulticlassClassification( input_features = 2, output_features = 4, hidden_units = 8 )
 
     def model( self ):
         self.__getModelObject()

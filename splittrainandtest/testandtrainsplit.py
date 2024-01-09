@@ -1,3 +1,4 @@
+import logging
 class TestAndTrainSplit:
     def __init__( self, X, y, trainPercentage = 80 ):
         self.train = X

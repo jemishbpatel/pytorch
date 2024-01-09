@@ -1,37 +1,33 @@
 import torch
 import logging
 
-logging.basicConfig( filename='binary_classification.log', encoding='utf-8', level=logging.INFO )
+logging.basicConfig( filename='multiclass_classification.log', encoding='utf-8', level=logging.INFO )
 
 from utility import tongue
-from dataloading.randomcircles import Circles
+from dataloading.muliclassblobs import MulticlassBlobs
 from splittrainandtest.testandtrainsplit import TestAndTrainSplit
 from visualize.plot import Visualize
-from createmodel.binaryclassificationmodel import BinaryClassificationModel
+from createmodel.multiclassclassification import MulticlassClassification
 from lossfunction.lossfunctionfactory import LossFunctionFactory
 from optimizer.optimizerfactory import OptmizerFactory
 from trainmodel.trainingmodelfactory import TrainModelFactory
 from savemodel.save import SaveModel
 from loadmodel.load import LoadModel
 
-class ClassificiationWorkFlow:
+class MulticlassClassificiationWorkFlow:
     def __init__( self):
         torch.manual_seed( 42 )
         self.model_0 = None
         self.lossFunction = None
         self.optimizer = None
-        self.trainModel = TrainModelFactory( dataType = tongue.BINARY_CLASSIFICATION )()
-        logging.info( f"{type( self.trainModel)}" )
         self._modelDirectoryPath = "models"
-        self._modelFilename = "01_pytorch_workflow_binary_classification_model_0.pth"
+        self._modelFilename = "01_pytorch_workflow_multiclass_classification_model_0.pth"
         self._modelState = None
         self._loadedModel = None
         logging.info( f"Running on: {tongue.TARGET_DEVICE}" )
 
     def initializeData( self ):
-        self.X, self.y = Circles( samples = 1000 ).create()
-        self.X = torch.from_numpy( self.X ).type( torch.float )
-        self.y = torch.from_numpy( self.y ).type( torch.float )
+        self.X, self.y = MulticlassBlobs( number_of_classes = 4, number_of_features = 2, random_seeds = 42 ).create()
 
     def testAndTrainSplit( self ):
         self.X_train, self.y_train, self.X_test, self.y_test = TestAndTrainSplit( self.X, self.y, trainPercentage = 80 ).split()
@@ -44,7 +40,7 @@ class ClassificiationWorkFlow:
         Visualize().plotCircles( self.X, self.y )
 
     def createModel( self ):
-        self.model_0 = BinaryClassificationModel( modelVersion = tongue.CIRCLE_MODEL_VERSION1 )
+        self.model_0 = MulticlassClassification( input_features = 2, output_features = 4, hidden_units = 8 )
         self.model_0.to( tongue.TARGET_DEVICE )
         logging.debug( list( self.model_0.parameters() ) )
         logging.debug( self.model_0.state_dict() )
@@ -59,14 +55,15 @@ class ClassificiationWorkFlow:
         Visualize().plotDecisionBoundaries( self.model_0, self.X_train, self.y_train, self.X_test, self.y_test )
 
     def getLossFunction( self ):
-        lossFunctionForBinaryClassification = LossFunctionFactory( data = tongue.BINARY_CLASSIFICATION )
+        lossFunctionForBinaryClassification = LossFunctionFactory( data = tongue.MULTILCLASS_CLASSIFICATION )
         self.lossFunction = lossFunctionForBinaryClassification()
 
     def getOptimizer( self ):
-        optimizerForBinaryClassification = OptmizerFactory( data = tongue.BINARY_CLASSIFICATION )
+        optimizerForBinaryClassification = OptmizerFactory( data = tongue.MULTILCLASS_CLASSIFICATION )
         self.optimizer = optimizerForBinaryClassification( params = self.model_0.parameters(), lr = 0.1 )
 
     def train( self ):
+        self.trainModel = TrainModelFactory( dataType = tongue.MULTILCLASS_CLASSIFICATION )()
         self.trainModel.trainingLoop( self.model_0, self.X_train, self.y_train, self.X_test, self.y_test, self.lossFunction, self.optimizer, epochs = 2000 )
         self.trainModel.plotLossCurve()
 
@@ -77,11 +74,11 @@ class ClassificiationWorkFlow:
         SaveModel( self.model_0, modeldirectoryPath = self._modelDirectoryPath, modelFilename = self._modelFilename )
 
     def loadModel( self ):
-        self._loadedModel = LoadModel( modelType = tongue.BINARY_CLASSIFICATION, modelPath = self._modelDirectoryPath + "/" + self._modelFilename ).model()
+        self._loadedModel = LoadModel( modelType = tongue.MULTILCLASS_CLASSIFICATION, modelPath = self._modelDirectoryPath + "/" + self._modelFilename ).model()
         logging.info( f"Loaded Trained Model parameters: {self._loadedModel.state_dict()}" )
 
 if __name__ == "__main__":
-    obj = ClassificiationWorkFlow()
+    obj = MulticlassClassificiationWorkFlow()
     obj.initializeData()
     obj.visualizeInitialData()
     obj.testAndTrainSplit()
