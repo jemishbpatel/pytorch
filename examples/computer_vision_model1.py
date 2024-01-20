@@ -47,7 +47,7 @@ class ComputerVisionModel1:
         Visualize().plotSampleImage( self.train_data[ 0 ] )
 
     def createModel( self ):
-        self.model_0 = ComputerVisionFashionMNISTModelV0( input_shape = 784, hidden_units = 10, output_shape = len( self.train_data.classes ) , model_type = tongue.LINEAR_MODEL_TYPE )
+        self.model_0 = ComputerVisionFashionMNISTModelV0( input_shape = 784, hidden_units = 10, output_shape = len( self.train_data.classes ) , model_type = tongue.NON_LINEAR_MODEL_TYPE )
         self.model_0.to( tongue.TARGET_DEVICE )
         logging.debug( list( self.model_0.parameters() ) )
         logging.debug( self.model_0.state_dict() )
@@ -75,7 +75,7 @@ class ComputerVisionModel1:
         self.optimizer = optimizerForBinaryClassification( params = self.model_0.parameters(), lr = 0.1 )
 
     def train( self ):
-        self.trainModel = ComputerVisionTrainloop( self.model_0, self.train_dataloader, self.test_dataloader, self.lossFunction, self.optimizer, epochs = 3 )
+        self.trainModel = ComputerVisionTrainloop( self.model_0, self.train_dataloader, self.test_dataloader, self.lossFunction, self.optimizer, tongue.TARGET_DEVICE, epochs = 3 )
         self.trainModel.trainingLoop()
     def displayParameters( self ):
         logging.info( f"Trained Model parameters: {self.model_0.state_dict()}" )

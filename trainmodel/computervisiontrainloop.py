@@ -7,19 +7,21 @@ from utility.helper_functions import accuracy_fn, print_train_time
 class ComputerVisionTrainloop:
     torch.manual_seed( 42 )
 
-    def __init__( self, model, train_dataloader, test_dataloader, lossFunction, optimizer, epochs = 3 ):
+    def __init__( self, model, train_dataloader, test_dataloader, lossFunction, optimizer, device, epochs = 3 ):
         self._epochs = epochs
         self._train_dataloader = train_dataloader
         self._test_dataloader = test_dataloader
         self._model = model
         self._lossFunction = lossFunction
         self._optimizer = optimizer
+        self._device = device
 
     def trainingLoop( self ):
         train_time_start_on_cpu = timer()
         for epoch in tqdm( range( self._epochs ) ):
             train_loss = 0
             for batch, ( X, y ) in enumerate( self._train_dataloader ):
+                X, y = X.to( self._device ), y.to( self._device )
                 self._model.train()
                 y_pred = self._model( X )
 
@@ -36,6 +38,7 @@ class ComputerVisionTrainloop:
             self._model.eval()
             with torch.inference_mode():
                 for X, y in self._test_dataloader:
+                    X, y = X.to( self._device ), y.to( self._device )
                     test_pred = self._model( X )
                     test_loss += self._lossFunction( test_pred, y )
                     test_acc += accuracy_fn( y_true = y, y_pred = test_pred.argmax( dim = 1 ))
