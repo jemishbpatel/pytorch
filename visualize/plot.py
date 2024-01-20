@@ -37,3 +37,9 @@ class Visualize:
         plt.title( "Test" )
         plot_decision_boundary( model, X_test, y_test)
         plt.show()
+
+    def plotSampleImage( self, train_data_sample ):
+        image, label = train_data_sample
+        plt.imshow( image.squeeze() )
+        plt.title( label )
+        plt.show()

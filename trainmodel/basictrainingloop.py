@@ -2,7 +2,7 @@ import logging
 import torch
 from tqdm import tqdm
 from visualize.plot import Visualize
-from utility.dailyhelp import accuracy_fn
+from utility.helper_functions import accuracy_fn
 
 class Training:
     def __init__( self ):
