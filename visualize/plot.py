@@ -1,3 +1,6 @@
+import logging
+import random
+from PIL import Image
 import matplotlib.pyplot as plt
 from utility.helper_functions import plot_predictions, plot_decision_boundary
 from torchmetrics import ConfusionMatrix
@@ -54,6 +57,7 @@ class Visualize:
             # Create a subplot
             plt.subplot( nrows, ncols, i + 1 )
             # Plot the target image
+            logging.info( f"Debug sample shape : {sample.shape}" )
             plt.imshow( sample.squeeze(), cmap = "gray" )
             # Find the prediction label (in text form, e.g. "Sandal")
             pred_label = class_names[ pred_classes[ i ] ]
@@ -81,4 +85,69 @@ class Visualize:
             class_names = class_names, # turn the row and column labels into class names
             figsize = ( 10, 7 )
         );
+        plt.show()
+
+    def randomImage( self, image_path ):
+        image_path_list = list( image_path.glob( "*/*/*.jpg" ))
+        random_image_path = random.choice( image_path_list )
+        image_class = random_image_path.parent.stem
+        img = Image.open(random_image_path)
+        plt.imshow( img )
+        plt.show()
+
+    def plot_transformed_images( self, image_paths, transform, n = 3, seed = 42 ):
+        random.seed( seed )
+        random_image_paths = random.sample( image_paths, k = n )
+        for image_path in random_image_paths:
+            with Image.open(image_path) as f:
+                fig, ax = plt.subplots( 1, 2 )
+                ax[ 0 ].imshow( f )
+                ax[ 0 ].set_title( f"Original \nSize: {f.size}" )
+                ax[ 0 ].axis( "off" )
+                transformed_image = transform( f ).permute( 1, 2, 0 )
+                ax[ 1 ].imshow( transformed_image )
+                ax[ 1 ].set_title( f"Transformed \nSize: {transformed_image.shape}" )
+                ax[ 1 ].axis( "off" )
+                fig.suptitle( f"Class: {image_path.parent.stem}", fontsize = 16 )
+        plt.show()
+
+    # 1. Take in a Dataset as well as a list of class names
+    def display_random_images( self, dataset,
+                          classes,
+                          n = 5,
+                          display_shape = True,
+                          seed = None ):
+
+        # 2. Adjust display if n too high
+        if n > 10:
+            n = 10
+            display_shape = False
+            print(f"For display purposes, n shouldn't be larger than 10, setting to 10 and removing shape display.")
+
+        # 3. Set random seed
+        if seed:
+            random.seed(seed)
+
+        # 4. Get random sample indexes
+        random_samples_idx = random.sample( range( len( dataset ) ), k = n )
+
+        # 5. Setup plot
+        plt.figure( figsize = ( 16, 8 ) )
+
+        # 6. Loop through samples and display random samples
+        for i, targ_sample in enumerate( random_samples_idx ):
+            targ_image, targ_label = dataset[ targ_sample ][ 0 ], dataset[ targ_sample ][ 1 ]
+
+            # 7. Adjust image tensor shape for plotting: [color_channels, height, width] -> [color_channels, height, width]
+            targ_image_adjust = targ_image.permute( 1, 2, 0 )
+
+            # Plot adjusted samples
+            plt.subplot( 1, n, i+1 )
+            plt.imshow( targ_image_adjust )
+            plt.axis( "off" )
+            if classes:
+                title = f"class: {classes[targ_label]}"
+                if display_shape:
+                    title = title + f"\nshape: {targ_image_adjust.shape}"
+            plt.title( title )
         plt.show()
