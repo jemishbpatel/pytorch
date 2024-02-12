@@ -42,3 +42,13 @@ class TransformData:
             transforms.ToTensor()
         ] )
         return train_transforms, test_transforms
+
+    def manualTransforms( self ):
+        # Create a transforms pipeline manually (required for torchvision < 0.13)
+        manual_transforms = transforms.Compose( [
+            transforms.Resize(( 224, 224 )), # 1. Reshape all images to 224x224 (though some models may require different sizes)
+            transforms.ToTensor(), # 2. Turn image values to between 0 & 1
+            transforms.Normalize( mean=[0.485, 0.456, 0.406], # 3. A mean of [0.485, 0.456, 0.406] (across each colour channel)
+                         std=[0.229, 0.224, 0.225] ) # 4. A standard deviation of [0.229, 0.224, 0.225] (across each colour channel),
+        ] )
+        return manual_transforms

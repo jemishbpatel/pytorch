@@ -9,5 +9,6 @@ MULTILCLASS_CLASSIFICATION = "MulticlassClassification"
 COMPUTER_VISION_MODEL = "ComputerVisionModel"
 LINEAR_MODEL_TYPE = "Linear"
 NON_LINEAR_MODEL_TYPE = "Non-linear"
+TRANSFER_LEARNING = "transfer-learning"
 
 TARGET_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
