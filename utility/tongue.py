@@ -10,5 +10,6 @@ COMPUTER_VISION_MODEL = "ComputerVisionModel"
 LINEAR_MODEL_TYPE = "Linear"
 NON_LINEAR_MODEL_TYPE = "Non-linear"
 TRANSFER_LEARNING = "transfer-learning"
+EFFICIENTNET_B2_MODEL = "efficientnet-b2"
 
 TARGET_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

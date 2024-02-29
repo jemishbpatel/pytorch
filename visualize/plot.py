@@ -204,3 +204,68 @@ class Visualize:
         plt.title(f"Pred: {class_names[target_image_pred_label]} | Prob: {target_image_pred_probs.max():.3f}")
         plt.axis( False )
         plt.show()
+
+    def plot_patch_images( self, image, label ):
+        image_permuted = image.permute( 1, 2, 0 )
+        patch_size = 16
+#        plt.figure( figsize = ( patch_size, patch_size ) )
+#        plt.imshow(image_permuted[ :patch_size, :, : ])
+        # Setup hyperparameters and make sure img_size and patch_size are compatible
+        img_size = image.shape[ 1 ]
+        logging.info( f"Debug image size {img_size}" )
+        patch_size = 16
+        num_patches = img_size/patch_size
+        assert img_size % patch_size == 0, "Image size must be divisible by patch size"
+        print(f"Number of patches per row: {num_patches}\nPatch size: {patch_size} pixels x {patch_size} pixels")
+
+        # Create a series of subplots
+        fig, axs = plt.subplots( nrows = img_size // patch_size,
+                        ncols = img_size // patch_size, # one column for each patch
+                        figsize = ( num_patches, num_patches ),
+                        sharex = True,
+                        sharey = True )
+
+        for i, patch_height in enumerate( range( 0, img_size, patch_size ) ): # iterate through height
+            for j, patch_width in enumerate( range( 0, img_size, patch_size ) ): # iterate through width
+
+                # Plot the permuted image patch (image_permuted -> (Height, Width, Color Channels))
+                axs[ i, j ].imshow( image_permuted[ patch_height:patch_height + patch_size, # iterate through height
+                                        patch_width:patch_width+patch_size, # iterate through width
+                                        : ] ) # get all color channels
+
+                # Set up label information, remove the ticks for clarity and set labels to outside
+                axs[ i, j ].set_ylabel( i+1,
+                             rotation = "horizontal",
+                             horizontalalignment = "right",
+                             verticalalignment = "center")
+                axs[ i, j ].set_xlabel( j + 1 )
+                axs[ i, j ].set_xticks( [] )
+                axs[ i, j ].set_yticks( [] )
+                axs[ i, j ].label_outer()
+
+        # Set a super title
+        #fig.suptitle( f"{ class_names[ label ] } -> Patchified", fontsize = 16 )
+        plt.show()
+
+    def plot_convolution_layer_features( self, image_out_of_conv ):
+        random_indexes = random.sample(range(0, 758), k=5) # pick 5 numbers between 0 and the embedding size
+        print(f"Showing random convolutional feature maps from indexes: {random_indexes}")
+
+        # Create plot
+        fig, axs = plt.subplots(nrows=1, ncols=5, figsize=(12, 12))
+
+        # Plot random image feature maps
+        for i, idx in enumerate( random_indexes ):
+            image_conv_feature_map = image_out_of_conv[ :, idx, :, : ] # index on the output tensor of the convolutional layer
+            axs[ i ].imshow( image_conv_feature_map.squeeze().detach().numpy() )
+            axs[ i ].set( xticklabels = [], yticklabels = [], xticks = [], yticks = [] )
+        plt.show()
+
+    def plot_single_feature_map( self, single_flattened_feature_map ):
+        # Plot the flattened feature map visually
+        plt.figure( figsize = ( 22, 22 ) )
+        plt.imshow( single_flattened_feature_map.detach().numpy() )
+        plt.title( f"Flattened feature map shape: {single_flattened_feature_map.shape}" )
+        plt.axis( False )
+        plt.show()
+

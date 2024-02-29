@@ -40,9 +40,11 @@ class ComputerVisionTrainloop:
 
                 y_pred_class = torch.argmax( torch.softmax( y_pred, dim = 1 ), dim = 1 )
                 train_acc += ( y_pred_class == y ).sum().item() / len( y_pred )
+
                 if batch % 400 == 0:
                      logging.info( f"Looked at { batch * len( X ) }/{ len(self._train_dataloader.dataset ) } samples" )
             train_loss /= len( self._train_dataloader )
+            train_acc /= len( self._train_dataloader )
             test_loss, test_acc = 0, 0
             self._model.eval()
             with torch.inference_mode():
